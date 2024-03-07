@@ -14,7 +14,7 @@ from matplotlib.figure import Figure
 from werkzeug.wrappers.response import Response as WerkzeugResponse
 
 # internal imports
-from codeapp.models import Dummy
+from codeapp.models import GoogleplayApps
 from codeapp.utils import calculate_statistics, get_data_list, prepare_figure
 
 # define the response type
@@ -29,7 +29,7 @@ bp = Blueprint("bp", __name__, url_prefix="/")
 @bp.get("/")  # root route
 def home() -> Response:
     # gets dataset
-    dataset: list[Dummy] = get_data_list()
+    dataset: list[GoogleplayApps] = get_data_list()
 
     # get the statistics that is supposed to be shown
     counter: dict[int, int] = calculate_statistics(dataset)
@@ -41,7 +41,7 @@ def home() -> Response:
 @bp.get("/image")
 def image() -> Response:
     # gets dataset
-    dataset: list[Dummy] = get_data_list()
+    dataset: list[GoogleplayApps] = get_data_list()
     print("len of dataset = ", len(dataset))
     # get the statistics that is supposed to be shown
     counter: dict[int, int] = calculate_statistics(dataset)
@@ -52,7 +52,7 @@ def image() -> Response:
     fig.gca().bar(
         list(sorted(counter.keys())),
         [counter[x] for x in sorted(counter.keys())],
-        color="gray",
+        color="pink",
         alpha=0.5,
         zorder=2,
     )
@@ -60,7 +60,7 @@ def image() -> Response:
         list(sorted(counter.keys())),
         [counter[x] for x in sorted(counter.keys())],
         marker="x",
-        color="#25a848",
+        color="#801964",
         zorder=3,
     )
     fig.gca().grid(ls=":", zorder=1)
@@ -90,7 +90,7 @@ def about() -> Response:
 @bp.get("/json-dataset")  # root route
 def get_json_dataset() -> Response:
     # gets dataset
-    dataset: list[Dummy] = get_data_list()
+    dataset: list[GoogleplayApps] = get_data_list()
 
     # render the page
     return jsonify(dataset)
@@ -99,7 +99,7 @@ def get_json_dataset() -> Response:
 @bp.get("/json-stats")  # root route
 def get_json_stats() -> Response:
     # gets dataset
-    dataset: list[Dummy] = get_data_list()
+    dataset: list[GoogleplayApps] = get_data_list()
 
     # get the statistics that is supposed to be shown
     counter: dict[int, int] = calculate_statistics(dataset)

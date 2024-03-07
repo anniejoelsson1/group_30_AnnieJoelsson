@@ -6,7 +6,7 @@ from datetime import date
 
 
 @dataclass
-class Dummy:
+class GoogleplayApps:
     app: str
     rating: float
     reviews: int
