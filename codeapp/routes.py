@@ -14,7 +14,7 @@ from matplotlib.figure import Figure
 from werkzeug.wrappers.response import Response as WerkzeugResponse
 
 # internal imports
-import codeapp.models as models
+from codeapp.models import Dummy
 from codeapp.utils import calculate_statistics, get_data_list, prepare_figure
 
 # define the response type
@@ -28,16 +28,47 @@ bp = Blueprint("bp", __name__, url_prefix="/")
 
 @bp.get("/")  # root route
 def home() -> Response:
-    # TODO
-    pass
+    # gets dataset
+    dataset: list[Dummy] = get_data_list()
+
+    # get the statistics that is supposed to be shown
+    counter: dict[int, int] = calculate_statistics(dataset)
+
+    # render the page
+    return render_template("home.html", counter=counter)
 
 
 @bp.get("/image")
 def image() -> Response:
+    # gets dataset
+    dataset: list[Dummy] = get_data_list()
+    print("len of dataset = ", len(dataset))
+    # get the statistics that is supposed to be shown
+    counter: dict[int, int] = calculate_statistics(dataset)
+    print("Years in dataset:", counter.keys())
     # creating the plot
-    fig = Figure()
 
-    # TODO: populate the plot
+    fig = Figure()
+    fig.gca().bar(
+        list(sorted(counter.keys())),
+        [counter[x] for x in sorted(counter.keys())],
+        color="gray",
+        alpha=0.5,
+        zorder=2,
+    )
+    fig.gca().plot(
+        list(sorted(counter.keys())),
+        [counter[x] for x in sorted(counter.keys())],
+        marker="x",
+        color="#25a848",
+        zorder=3,
+    )
+    fig.gca().grid(ls=":", zorder=1)
+    fig.gca().set_xlabel("Year")
+    fig.gca().set_ylabel("Number of apps")
+    fig.gca().set_xticks(range(min(counter.keys()), max(counter.keys()) + 1))
+
+    fig.tight_layout()
 
     ################ START -  THIS PART MUST NOT BE CHANGED BY STUDENTS ################
     # create a string buffer to hold the final code for the plot
@@ -56,13 +87,22 @@ def about() -> Response:
 ################################## web service routes ##################################
 
 
-@bp.get("/json-dataset")
+@bp.get("/json-dataset")  # root route
 def get_json_dataset() -> Response:
-    # TODO
-    pass
+    # gets dataset
+    dataset: list[Dummy] = get_data_list()
+
+    # render the page
+    return jsonify(dataset)
 
 
-@bp.get("/json-stats")
+@bp.get("/json-stats")  # root route
 def get_json_stats() -> Response:
-    # TODO
-    pass
+    # gets dataset
+    dataset: list[Dummy] = get_data_list()
+
+    # get the statistics that is supposed to be shown
+    counter: dict[int, int] = calculate_statistics(dataset)
+
+    # render the page
+    return jsonify(counter)
